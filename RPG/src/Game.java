@@ -16,7 +16,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private ImageIcon startBg;
 	private ImageIcon gameBg;
 	private ImageIcon fireText;
+	private ImageIcon selectText;
 	private ImageIcon chooseBg;
+	
 	private String welcome;
 	private String welcome2;
 	private boolean isVisible;
@@ -39,9 +41,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		startBg = new ImageIcon("Start.png");
 		gameBg = new ImageIcon("Game.png");
 		fireText = new ImageIcon("Fire.gif");
+		selectText = new ImageIcon("selectC.gif");
 		chooseBg = new ImageIcon("Forest.png");
-		welcome = "Welcome to Forest Questt";
-		welcome2 = "Press Space to Continuee";
+		welcome = "Welcome to Forest Quest";
+		welcome2 = "Press Space to Continue";
 		time = System.currentTimeMillis();
 
 		// create the enemy position
@@ -106,9 +109,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	public void drawStartScreen(Graphics g2d) {
 		g2d.setColor(Color.black);
 		g2d.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), this);
-		g2d.drawString(welcome.substring(0, welcome.length() - 1), 550, 400);
+		g2d.drawString(welcome.substring(0, i), 550, 400);
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 60));
-		g2d.drawString(welcome2.substring(0, welcome2.length() - 1), 650, 460);
+	   g2d.drawString(welcome2.substring(0, i), 650, 460);
 		if (i < welcome.length()) {
 			if (System.currentTimeMillis() - time > 100) {
 				time = System.currentTimeMillis();
@@ -130,6 +133,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		g2d.drawImage(chooseBg.getImage(), 0, 0, getWidth(), getHeight(), this);
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 50));
 		g2d.setColor(Color.BLACK);
+		//g2d.drawImage(selectText.getImage(), 500,y,1000, 1000,this);
 		g2d.drawString("Select your character's number to begin", 550, 95);
 		g2d.setColor(Color.white);
 		int namex;
