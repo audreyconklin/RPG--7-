@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.util.Scanner;
+import java.io.IOException;
 
 public class Game extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private BufferedImage back;
@@ -25,6 +30,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private double time;
 	private int i;
 	private Queue<Enemy> enemies;
+	private File saveFile;
+
 
 	public Game() {
 
@@ -35,6 +42,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		key = -1;
 		x = 0;
 		y = 0;
+		saveFile= new File("saved_file2.0.txt");
 		rangedWeap = new ArrayList<Ranged>();
 		screen = "start";
 	    isVisible = true;
@@ -55,7 +63,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		for (Characters c : charList) {
 			System.out.println(c);
 		}
-
+		
 	}
 
 	// create enemy positions
@@ -67,6 +75,60 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		temp.add(new Thorn(1200, 300));
 		return temp;
 	}
+	public void createFile(){
+		try {
+			if(saveFile.createNewFile()){
+				System.out.println("Succesfully created file!");
+
+			}
+			else{
+				System.out.println(" File already exists!");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	} 
+	public void readFile(){
+		Scanner sc;
+		try {
+			sc = new Scanner(saveFile); 
+				while(sc.hasNext()){
+				System.out.println(sc.next());
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
+
+	public void writeToFile(){
+	 FileWriter myWriter;
+	try {
+		myWriter = new FileWriter(saveFile);
+	 //write whatever you want to save
+		if(enemies.isEmpty()){
+		   myWriter.write("win");
+   
+		}
+		else{
+		   myWriter.write("You have" +enemies.size()+" enemies left");
+	   
+	   }
+	   myWriter.close();
+	   System.out.println("Successfully wrote to file");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	
+	
+
+}
+	
+
 
 	// create characters
 	public ArrayList<Characters> setCharList() {
