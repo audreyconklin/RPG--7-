@@ -22,7 +22,7 @@ public class Enemy extends Characters {
     }
 
     public Enemy(int x, int y, int w, int h, int speed, int hea, int dam, int st, ImageIcon pic, Weapons wea) {
-        super(x, y, w, h, speed, hea, dam, st, pic, wea);
+       // super(x, y, w, h, speed, hea, dam, st, pic, wea);
 
         this.isUnderFire = false;
         this.accuracy = 0.8;

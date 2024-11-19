@@ -43,7 +43,7 @@ public class Characters {
 
     }
 
-    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p,
+    public Characters(int xV, int yV, int width, int height, int dx, int dy,  int sp, int hea, int dam, int st, ImageIcon p,
             Weapons we) {
         x = xV;
         y = yV;
@@ -83,12 +83,30 @@ public class Characters {
         // Create and return a new projectile
         return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
     }
+    public void drawChar(Graphics g2d){
+        // Draw character
+     //g2d.drawImage(pic.getImage(), x, y, w, h, null);
+     g2d.drawImage(pic.getImage(), x, y, w, h,null);
+     if (weap!= null) {
+         weap.drawWeap(g2d);
+     }
+  
+     
+     
+     // Ensure the weapon follows the character
+     if (weap != null) {
+         weap.setX(x + w); // Adjust weapon position based on character's position
+         weap.setY(y);
+         weap.drawWeap(g2d);
+     }
+     }
+    
 
-    public void drawChar(Graphics g2d) {
+   /*  public void drawChar(Graphics g2d) {
         g2d.drawImage(pic.getImage(), x, y, w, h, null);
         weap.drawWeap(g2d);
     }
-
+*/
     public String getName() {
         return "not set";
     }
@@ -190,5 +208,23 @@ public class Characters {
         return this;
 
     }
-
+    public void move() {
+		x+=dx;
+		if(x+w >800)
+			x=800-w;
+		
+		y+=dy;
+		if(y+h>570)
+			y=570-h;
+		
+		
+		if(y<0)
+			y=0;
+		
+	
+		if(x<0)
+			x=0;
+		
+		
+	}
 }

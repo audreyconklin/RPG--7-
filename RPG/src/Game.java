@@ -69,10 +69,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	// create enemy positions
 	public Queue<Enemy> setEs() {
 		Queue<Enemy> temp = new LinkedList<>();
-		temp.add(new Thorn(600, 300));
-		temp.add(new Thorn(800, 300));
-		temp.add(new Thorn(1000, 300));
-		temp.add(new Thorn(1200, 300));
+	    temp.add(new Thorn(600, 550));
+		temp.add(new Thorn(800, 550));
+		temp.add(new Thorn(1000, 550));
+		temp.add(new Thorn(1200, 550));
 		return temp;
 	}
 	public void createFile(){
@@ -133,10 +133,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	// create characters
 	public ArrayList<Characters> setCharList() {
 		ArrayList<Characters> temp = new ArrayList<>();
-		temp.add(new Ivy(150, 350));
-		temp.add(new Willow(600, 350));
-		temp.add(new Oakley(1050, 345));
-		temp.add(new River(1500, 350));
+		temp.add(new Ivy(150, 350, 300, 200, 2, 2));
+		temp.add(new Willow(600, 350, 300, 200, 2, 2));
+		temp.add(new Oakley(1050, 345, 300, 200, 2,2 ));
+		temp.add(new River(1500, 350, 300, 200, 2, 2));
 		return temp;
 	}
 
@@ -213,6 +213,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	public void drawGameScreen(Graphics g2d) {
 
 		// draw the background character
+		player.setX(100);
+				player.setY(600);
+				player.setWidth(150);
+				player.setHeight(150);
 		g2d.drawImage(gameBg.getImage(), 0, 0, getWidth(), getHeight(), this);
 		if (isVisible) {
 			g2d.drawImage(fireText.getImage(), 650, 0, 500, 180, this);
@@ -358,7 +362,21 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		if (key == 32) {
 			screen = "choose";
 		}
-
+		if(key==39) {
+		player.setDx(2);
+	}
+	//Left  key
+	if(key==37) {
+		player.setDx(-2);
+	}
+	//Down Key
+	if(key==40) {
+		player.setDy(2);
+	}
+	//Up Key
+	if(key==38){
+       player.setDy(-2);
+	}
 		if (key == 49) {
 			screen = "selection";
 			player = charList.get(0);
@@ -389,8 +407,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 		if (key == 10) {
 			if (player != null) {
-				// player.setX(150);
+				
 				screen = "gameplay";
+
 				System.out.println("Switching to Gameplay Screen");
 			} else {
 				System.out.println("No player selected. Cannot switch to gameplay.");
@@ -406,6 +425,21 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	// DO NOT DELETE
 	@Override
 	public void keyReleased(KeyEvent e) {
+		if(key==39) {
+			player.setDx(0);
+		}
+		//Left  key
+		if(key==37) {
+			player.setDx(0);
+		}
+		//Down Key
+		if(key==40) {
+			player.setDy(0);
+		}
+		//Up Key
+		if(key==38){
+		   player.setDy(0);
+		}
 	}
 
 	@Override
