@@ -32,9 +32,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private Queue<Enemy> enemies;
 	private File saveFile;
 
-
 	public Game() {
-
+ 
 		new Thread(this).start();
 		this.addKeyListener(this);
 		this.addMouseListener(this);
@@ -213,8 +212,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	public void drawGameScreen(Graphics g2d) {
 
 		// draw the background character
-		player.setX(100);
-				player.setY(600);
+		     player.move();
+		       // player.setX(100);
+			//	player.setY(600);
 				player.setWidth(150);
 				player.setHeight(150);
 		g2d.drawImage(gameBg.getImage(), 0, 0, getWidth(), getHeight(), this);
@@ -237,10 +237,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 
 		// Draw only the current enemy
-		Enemy currentEnemy = enemies.peek();
-		if (currentEnemy != null) {
-			currentEnemy.moveProjectiles();
+		Enemy currentEnemy = enemies.element();
+		if (currentEnemy != null ) {
 			currentEnemy.drawChar(g2d);
+
 		}
 
 		// Check for collisions and clean up
@@ -346,7 +346,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 			// Make the enemy fire back
 			Enemy currentEnemy = enemies.peek();
-			if (currentEnemy != null) {
+			if (currentEnemy != null && currentEnemy.checkProjectiles()) {
 				currentEnemy.fireBack();
 			}
 		}

@@ -34,6 +34,9 @@ public class Enemy extends Characters {
 
     }
 
+    public boolean checkProjectiles(){
+        return enemyProjectiles !=null;
+    }
     public void fireBack() {
         // Create a new projectile for the enemy
         Ranged enemyProjectile = new Spear(
