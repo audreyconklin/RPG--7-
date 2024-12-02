@@ -5,8 +5,8 @@ public class Willow extends Characters{
     public Willow(){
      super();
 }
-public Willow(int x, int y, int w, int h, int dx, int dy){
-    super(x,y, w, h, dx, dy , 1000, 5, 10, 1, new ImageIcon("Willow.png"),new Crossbow(x+200,y+140));
+public Willow(int x, int y, int w, int h, int sp){
+    super(x,y, w, h, sp, 5, 10, 1, new ImageIcon("Willow.png"),"CROSSBOW");
     //super.getWeapon().setX(super.getX()+super.getWidth());
     //super.setWeapons(setList());
     

@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class Crossbow extends Weapons {
+public class Crossbow extends Ranged {
     public Crossbow (){
         super();
     }

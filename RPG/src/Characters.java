@@ -7,8 +7,9 @@ public class Characters {
 
     private int x, y, w, h, speed, health, damage, stam, dx, dy;
     private ImageIcon pic;
-    private Weapons weap;
-    private ArrayList<Weapons> weaponList;
+    private Ranged weap;
+    private String weaponType;
+   // private ArrayList<Weapons> weaponList;
 
     public Characters() {
         x = 0;
@@ -25,39 +26,58 @@ public class Characters {
 
     }
 
-    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p, Weapons we,
-            ArrayList<Weapons> list) {
+    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p, String weaponType) {
         x = xV;
         y = yV;
         w = width;
         h = height;
         speed = sp;
-        health = hea;
         damage = dam;
         stam = st;
         pic = p;
         dx = 0;
         dy = 0;
-        weap = we;
-        weaponList = list;
+        this.weaponType =weaponType;
+        this.weap = createNewWeapon();
+        //weap = we;
+       // weaponList = list;
 
     }
 
-    public Characters(int xV, int yV, int width, int height, int dx, int dy,  int sp, int hea, int dam, int st, ImageIcon p,
-            Weapons we) {
-        x = xV;
-        y = yV;
-        w = width;
-        h = height;
-        speed = sp;
-        health = hea;
-        damage = dam;
-        stam = st;
-        pic = p;
-        dx = 0;
-        dy = 0;
-        weap = we;
+    // public Characters(int xV, int yV, int width, int height, int dx, int dy,  int sp, int hea, int dam, int st, ImageIcon p,
+    //         Weapons we) {
+    //     x = xV;
+    //     y = yV;
+    //     w = width;
+    //     h = height;
+    //     speed = sp;
+    //     health = hea;
+    //     damage = dam;
+    //     stam = st;
+    //     pic = p;
+    //     dx = 0;
+    //     dy = 0;
+    //     weap = we;
 
+    // }
+    
+    // Method to create a new weapon after the old one is thrown
+    public Ranged createNewWeapon() {
+
+        switch (weaponType.toUpperCase()) {
+            case "KNIFE":
+                return new Knife(getX() + getWidth(), getY() + getHeight() / 2);
+            case "SPEAR":
+                return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
+            case "CROSSBOW":
+                return new Crossbow(getX() + getWidth(), getY() + getHeight() / 2);
+            case "SLINGSHOT":
+                return new Slingshot(getX() + getWidth(), getY() + getHeight() / 2);
+            // Add more cases for other weapons
+            default:
+                throw new IllegalArgumentException("Unknown weapon type: " + weaponType);
+        }
+       
     }
 
     public Weapons getWeapon() {
@@ -81,32 +101,27 @@ public class Characters {
 
     public Ranged throwWeapon() {
         // Create and return a new projectile
-        return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
+       ///  return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
+       return createNewWeapon();
     }
+
     public void drawChar(Graphics g2d){
         // Draw character
-     //g2d.drawImage(pic.getImage(), x, y, w, h, null);
-     g2d.drawImage(pic.getImage(), x, y, w, h,null);
-     if (weap!= null) {
-         weap.drawWeap(g2d);
-     }
-  
-     
-     
-     // Ensure the weapon follows the character
-     if (weap != null) {
-         weap.setX(x + w); // Adjust weapon position based on character's position
-         weap.setY(y);
-         weap.drawWeap(g2d);
-     }
+        g2d.drawImage(pic.getImage(), x, y, w, h,null);
+        if (weap!= null) {
+            weap.drawWeap(g2d);
+        }
+        
+        // Ensure the weapon follows the character
+        
+        if (weap != null) {
+            weap.setX(x + w-45); // Adjust weapon position based on character's position
+            weap.setY(y + (h/2));
+            weap.drawWeap(g2d);
+        }
      }
     
 
-   /*  public void drawChar(Graphics g2d) {
-        g2d.drawImage(pic.getImage(), x, y, w, h, null);
-        weap.drawWeap(g2d);
-    }
-*/
     public String getName() {
         return "not set";
     }
@@ -208,23 +223,27 @@ public class Characters {
         return this;
 
     }
-    public void move() {
-		x+=dx;
-		if(x+w >800)
-			x=800-w;
-		
-		y+=dy;
-		if(y+h>570)
-			y=570-h;
-		
-		
-		if(y<0)
-			y=0;
-		
-	
-		if(x<0)
-			x=0;
-		
-		
-	}
+    public void move(int screenWidth, int screenHeight) {
+        int offset;
+
+        offset = screenHeight -60;
+
+        // Update position
+        x += dx;
+        y += dy;
+    
+        // Ensure the character stays within bounds
+        if (x < 0) {
+            x = 0; // Left edge
+        } else if (x + w > screenWidth) {
+            x = screenWidth - w; // Right edge
+        }
+    
+        if (y < 0) {
+            y = 0; // Top edge
+        } else if (y + h > offset ) {
+            y = offset - h; // Bottom edge
+        }
+    }
+    
 }

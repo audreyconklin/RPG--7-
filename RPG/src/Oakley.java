@@ -5,8 +5,8 @@ public class Oakley extends Characters{
     public Oakley(){
      super();
 }
-public Oakley(int x, int y, int w, int h, int dx, int dy){
-    super(x,y, w, h, 2,2, 1000, 5, 10, 1, new ImageIcon("Oakley.png"),new Spear(x+200,y+140));
+public Oakley(int x, int y, int w, int h, int sp){
+    super(x,y, w, h, sp, 5, 10, 1, new ImageIcon("Oakley.png"),"SPEAR");
     //super.getWeapon().setX(super.getX()+super.getWidth());
     //super.setWeapons(setList());
     

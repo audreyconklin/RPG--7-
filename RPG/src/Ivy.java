@@ -7,10 +7,8 @@ public class Ivy extends Characters {
         super();
     }
 
-    public Ivy(int x, int y, int w, int h, int dx, int dy) {
-        super(x, y, w, h, dx, dy, 1000, 5, 10, 1, new ImageIcon("Ivy.png"), new Knife(x + 200, y + 140));
-        // super.getWeapon().setX(super.getX()+super.getWidth());
-        // super.setWeapons(setList());
+    public Ivy(int x, int y, int w, int h, int sp) {
+        super(x, y, w, h, sp, 5, 10, 1, new ImageIcon("Ivy.png"), "KNIFE" );
 
     }
 

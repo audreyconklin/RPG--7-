@@ -1,6 +1,6 @@
 import javax.swing.ImageIcon;
 
-public class Slingshot extends Weapons {
+public class Slingshot extends Ranged {
     public Slingshot(){
         super();
     }

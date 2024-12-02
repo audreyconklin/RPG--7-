@@ -3,9 +3,9 @@ import javax.swing.ImageIcon;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+// import java.util.Random;
+/// import java.util.Timer;
+//import java.util.TimerTask;
 
 public class Enemy extends Characters {
 
@@ -13,23 +13,23 @@ public class Enemy extends Characters {
     private int reactionTime;
     private boolean isUnderFire;
     // private long lastShotTime;
-    private Timer timer;
-    private Random random;
+    //private Timer timer;
+    //private Random random;
     private ArrayList<Ranged> enemyProjectiles;
 
     public Enemy() {
         super();
     }
 
-    public Enemy(int x, int y, int w, int h, int speed, int hea, int dam, int st, ImageIcon pic, Weapons wea) {
-       // super(x, y, w, h, speed, hea, dam, st, pic, wea);
+    public Enemy(int x, int y, int w, int h, int speed, int hea, int dam, int st, ImageIcon pic, String weaponType) {
+          super(x, y, w, h, speed, hea, dam, st, pic, weaponType);
 
         this.isUnderFire = false;
         this.accuracy = 0.8;
         this.reactionTime = 400;
-        this.random = new Random();
+       // this.random = new Random();
         // this.lastShotTime = System.currentTimeMillis();
-        this.timer = new Timer();
+       // this.timer = new Timer();
         this.enemyProjectiles = new ArrayList<Ranged>();
 
     }
