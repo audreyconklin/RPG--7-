@@ -139,15 +139,15 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		FileWriter myWriter;
 		try {
 			myWriter = new FileWriter(saveFile);
-			// write whatever you want to save
-			if (enemies.isEmpty()) {
-				myWriter.write("win");
+			// // write whatever you want to save
+			// if (enemies.isEmpty()) {
+			// 	myWriter.write("win");
 
-			} else {
-				String time = String.format("%02d:%02d", minutes, seconds);
-				myWriter.write("You took " + time + " last time to defeat the enemy");
+			// } else {
+			String time = String.format("%02d:%02d", minutes, seconds);
+			myWriter.write("You took " + time + " last time to defeat the enemy");
 
-			}
+			// }
 			myWriter.close();
 			System.out.println("Successfully wrote to file");
 		} catch (IOException e) {
@@ -250,27 +250,28 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	// Method to draw game elements
 	public void drawGameScreen(Graphics g2d) {
-
-		
+	
 
 		// draw the background character
 		player.move(screenWidth, screenHeight);
-	
+
 
 		g2d.drawImage(gameBg.getImage(), 0, 0, getWidth(), getHeight(), this);
+
+		
+		// Display the time as MM:SS
+		g2d.setFont(new Font("Times new Roman", Font.BOLD, 30));
+		g2d.setColor(Color.white);
+		String time = String.format("%02d:%02d", minutes, seconds);
+		g2d.drawString(time, 10, 30);
+
+
 		if (isVisible) {
 
 
-			// Display the time as MM:SS
-			g2d.setFont(new Font("Times new Roman", Font.BOLD, 30));
-			g2d.setColor(Color.white);
-			String time = String.format("%02d:%02d", minutes, seconds);
-			g2d.drawString(time, 10, 30);
-
-
 			g2d.drawImage(fireText.getImage(), 650, 0, 500, 180, this);
+			
 			String fileContents = readFile();  // Read the contents of the file
-
 			if (fileContents != null) {
 
 				g2d.setFont(new Font("Times new Roman", Font.BOLD, 40));
@@ -306,7 +307,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			// move the projectiles
 			currentEnemy.moveProjectiles();
 		} else {
+			timer.stop();
 			System.out.println("No enemies to draw.");
+
 		}
 
 		// Check for collisions and clean up
