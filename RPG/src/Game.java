@@ -38,6 +38,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	private int seconds = 0;  // Track seconds
     private int minutes = 0;  // Track minutes
+	private int milliseconds = 0;
 	private Timer timer;
 
 	private Timer enemyFireTimer;
@@ -250,21 +251,17 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	// Method to draw game elements
 	public void drawGameScreen(Graphics g2d) {
-	
-
-		// draw the background character
-		player.move(screenWidth, screenHeight);
-
-
 		g2d.drawImage(gameBg.getImage(), 0, 0, getWidth(), getHeight(), this);
-
 		
 		// Display the time as MM:SS
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 30));
 		g2d.setColor(Color.white);
-		String time = String.format("%02d:%02d", minutes, seconds);
+		// Format the time as mm:ss:SSS (minutes:seconds:milliseconds)
+		String time = String.format("%02d:%02d:%02d", minutes, seconds, milliseconds);
 		g2d.drawString(time, 10, 30);
 
+		// draw the background character
+		player.move(screenWidth, screenHeight);
 
 		if (isVisible) {
 
@@ -444,14 +441,22 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
         
     }
 
+	// Update the timer every 10ms
 	private void updateTimer() {
+		milliseconds++;  // Increment milliseconds
+
+		if (milliseconds >= 100) { // 100 milliseconds = 1 second
+			milliseconds = 0;  // Reset milliseconds
 			seconds++;  // Increment seconds
-			if (seconds == 60) {
-				seconds = 0;  // Reset seconds to 0 after 60
-				minutes++;  // Increment minutes
-			}
-			// Repaint the screen to update the displayed time
-			repaint();
+		}
+
+		if (seconds >= 60) {  // 60 seconds = 1 minute
+			seconds = 0;  // Reset seconds
+			minutes++;  // Increment minutes
+		}
+
+		// Repaint the screen to update the displayed time
+		repaint();
 	}
 
 	private void resetCharPosandSize() {
