@@ -2,6 +2,7 @@
 import java.awt.Graphics;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import java.awt.*;
 
 public class Characters {
 
@@ -9,7 +10,11 @@ public class Characters {
     private ImageIcon pic;
     private Ranged weap;
     private String weaponType;
-   // private ArrayList<Weapons> weaponList;
+    private int originalX, originalY;
+    private boolean isHit = false;
+    private int shakeCount = 0;
+    private final int MAX_SHAKE_COUNT = 10; // Number of shake iterations
+    
 
     public Characters() {
         x = 0;
@@ -26,41 +31,26 @@ public class Characters {
 
     }
 
-    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p, String weaponType) {
+    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p,
+            String weaponType) {
         x = xV;
         y = yV;
         w = width;
         h = height;
         speed = sp;
+        health = hea;
         damage = dam;
         stam = st;
         pic = p;
         dx = 0;
         dy = 0;
-        this.weaponType =weaponType;
+        this.weaponType = weaponType;
         this.weap = createNewWeapon();
-        //weap = we;
-       // weaponList = list;
+        // weap = we;
+        // weaponList = list;
 
     }
 
-    // public Characters(int xV, int yV, int width, int height, int dx, int dy,  int sp, int hea, int dam, int st, ImageIcon p,
-    //         Weapons we) {
-    //     x = xV;
-    //     y = yV;
-    //     w = width;
-    //     h = height;
-    //     speed = sp;
-    //     health = hea;
-    //     damage = dam;
-    //     stam = st;
-    //     pic = p;
-    //     dx = 0;
-    //     dy = 0;
-    //     weap = we;
-
-    // }
-    
     // Method to create a new weapon after the old one is thrown
     public Ranged createNewWeapon() {
 
@@ -77,7 +67,7 @@ public class Characters {
             default:
                 throw new IllegalArgumentException("Unknown weapon type: " + weaponType);
         }
-       
+
     }
 
     public Weapons getWeapon() {
@@ -101,26 +91,29 @@ public class Characters {
 
     public Ranged throwWeapon() {
         // Create and return a new projectile
-       ///  return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
-       return createNewWeapon();
+        return createNewWeapon();
     }
 
-    public void drawChar(Graphics g2d){
+    public void drawChar(Graphics g2d) {
         // Draw character
-        g2d.drawImage(pic.getImage(), x, y, w, h,null);
-        if (weap!= null) {
-            weap.drawWeap(g2d);
-        }
-        
-        // Ensure the weapon follows the character
-        
+        g2d.drawImage(pic.getImage(), x, y, w, h, null);
         if (weap != null) {
-            weap.setX(x + w-45); // Adjust weapon position based on character's position
-            weap.setY(y + (h/2));
             weap.drawWeap(g2d);
         }
-     }
-    
+
+        // Ensure the weapon follows the character
+
+        if (weap != null) {
+            weap.setX(x + w - 45); // Adjust weapon position based on character's position
+            weap.setY(y + (h / 2));
+            weap.drawWeap(g2d);
+        }
+    }
+
+    public String toString() {
+        return "   Health: " + getHealth() + "    Speed: " + getSpeed() + "    Damage: " + getDamage() + "    Weapon: "
+                + getWeapon();
+    }
 
     public String getName() {
         return "not set";
@@ -217,33 +210,109 @@ public class Characters {
         this.dy = dy;
     }
 
- 
     public Characters pic(ImageIcon pic) {
         setPic(pic);
         return this;
 
     }
-    public void move(int screenWidth, int screenHeight) {
-        int offset;
 
-        offset = screenHeight -60;
-
+        public boolean isMovingLeft() {
+            return dx < 0;
+        }
+    
+        public boolean isMovingRight() {
+            return dx > 0;
+        }
+    
+        public boolean isMovingUp() {
+            return dy < 0;
+        }
+    
+        public boolean isMovingDown() {
+            return dy > 0;
+        }
+    
+    
+    public boolean move(int screenWidth, int screenHeight, boolean enemyDefeated) {
+        int offset = screenHeight - 60;
+        boolean shouldChangeBackground = false;
+    
         // Update position
         x += dx;
         y += dy;
     
+        // Ensure the character stays within bounds or transitions
+        if (x < 0) {
+            x = 0; // Left edge
+        } else if (x + w > screenWidth) {
+            if (enemyDefeated) {
+                x = -w; // Transition to the left side
+                shouldChangeBackground = true; // Indicate that the background should be changed
+            } else {
+                x = screenWidth - w; // Right edge, if enemies are not defeated
+            }
+        }
+    
+        if (y < 0) {
+            y = 0; // Top edge
+        } else if (y + h > offset) {
+            y = offset - h; // Bottom edge
+        }
+    
+        return shouldChangeBackground;
+    }
+    
+
+ /*    public void move(int screenWidth, int screenHeight) {
+        int offset;
+
+        offset = screenHeight - 60;
+
+        // Update position
+        x += dx;
+        y += dy;
+
         // Ensure the character stays within bounds
         if (x < 0) {
             x = 0; // Left edge
         } else if (x + w > screenWidth) {
             x = screenWidth - w; // Right edge
         }
-    
+
         if (y < 0) {
             y = 0; // Top edge
-        } else if (y + h > offset ) {
+        } else if (y + h > offset) {
             y = offset - h; // Bottom edge
         }
     }
-    
+*/
+    public void onHit() {
+        if (!isHit) {
+            isHit = true;
+            originalX = x;
+            originalY = y;
+            shakeCount = 0;
+        }
+    }
+
+    public void updateHitEffect() {
+        if (isHit) {
+            // Shake effect
+            if (shakeCount < MAX_SHAKE_COUNT) {
+                int shakeX = (int)(Math.random() * 30 - 15); // Random shake between -5 and 5
+                int shakeY = (int)(Math.random() * 30 - 15);
+                
+                x = originalX + shakeX;
+                y = originalY + shakeY;
+                
+                shakeCount++;
+            } else {
+                // Reset to original position after shaking
+                x = originalX;
+                y = originalY;
+                isHit = false;
+            }
+        }
+    }
+
 }

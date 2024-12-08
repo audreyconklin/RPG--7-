@@ -1,6 +1,9 @@
 import javax.swing.ImageIcon;
 
 public class Ranged extends Weapons {
+
+    private boolean isEnemyProjectile = false;
+
     public Ranged(){
      super();
     }
@@ -9,5 +12,12 @@ public class Ranged extends Weapons {
         super(xV,yV,width, height, d,dur,dp,p);
     }
 
+    public void setEnemyProjectile(boolean isEnemy) {
+        this.isEnemyProjectile = isEnemy;
+    }
+
+    public boolean isEnemyProjectile() {
+        return this.isEnemyProjectile;
+    }
 
 }
