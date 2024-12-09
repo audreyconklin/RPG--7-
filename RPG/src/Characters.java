@@ -59,10 +59,12 @@ public class Characters {
                 return new Knife(getX() + getWidth(), getY() + getHeight() / 2);
             case "SPEAR":
                 return new Spear(getX() + getWidth(), getY() + getHeight() / 2);
-            case "CROSSBOW":
-                return new Crossbow(getX() + getWidth(), getY() + getHeight() / 2);
-            case "SLINGSHOT":
-                return new Slingshot(getX() + getWidth(), getY() + getHeight() / 2);
+            case "MACE":
+                return new Mace(getX() + getWidth(), getY() + getHeight() / 2);
+            case "SCYTHE":
+                return new Scythe(getX() + getWidth(), getY() + getHeight() / 2);
+            case "VECTOR":
+                return new Vector(getX() + getWidth(), getY() + getHeight() / 2);
             // Add more cases for other weapons
             default:
                 throw new IllegalArgumentException("Unknown weapon type: " + weaponType);

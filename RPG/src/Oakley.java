@@ -8,7 +8,7 @@ public class Oakley extends Characters {
     }
 
     public Oakley(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 3, 10, 1, new ImageIcon("Oakley.png"), "SPEAR");
+        super(x, y, w, h, sp, 3, 10, 1, new ImageIcon("Oakley.png"), "MACE");
 
     }
 
@@ -23,7 +23,7 @@ public class Oakley extends Characters {
 
     public ArrayList<Weapons> setList() {
         ArrayList<Weapons> temp = new ArrayList<Weapons>();
-        temp.add(new Spear());
+        temp.add(new Mace());
         return temp;
     }
 }

@@ -25,6 +25,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private ImageIcon gameBg;
 	private ImageIcon fireText;
 	private ImageIcon level1;
+	private ImageIcon level2;
 	private ImageIcon selectText;
 	private ImageIcon chooseBg;
 
@@ -70,6 +71,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		gameBg = new ImageIcon("Game.png");
 		fireText = new ImageIcon("Fire.gif");
 		level1 = new ImageIcon("DefeatLevel1.gif");
+		level2 = new ImageIcon("DefeatLevel2.gif");
 		selectText = new ImageIcon("selectC.gif");
 		chooseBg = new ImageIcon("Forest.png");
 		welcome = "Welcome to Forest Quest";
@@ -265,11 +267,11 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	// Method to change the level
 	private void changeLevel() {
-		currentLevel++;
-		switch (currentLevel) {
-			case 1:
-				gameBg = new ImageIcon("Game.png");
-				enemies = setEs(currentLevel);
+			currentLevel++;
+			switch (currentLevel) {
+				case 1:
+					gameBg = new ImageIcon("Game.png");
+					enemies = setEs(currentLevel);
 				break;
 			case 2:
 				gameBg = new ImageIcon("Game2.png");
@@ -340,10 +342,17 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		g2d.drawString(phealth, 10, 60);
 
 		if (enemydefeated) {
-			if(currentLevel==3 ) {
+			if(currentLevel==1) {
+				g2d.drawImage(level1.getImage(), 650, 0, 500, 180, this);
+			}
+			else if (currentLevel==2){
+				g2d.drawImage(level2.getImage(), 650, 0, 500, 180, this);
+			}
+
+			else if(currentLevel==3 ) {
 				screen = "win";
 			}
-			g2d.drawImage(level1.getImage(), 650, 0, 1000, 200, this);
+			
 		}
 		// when firing turn off text
 		if (isVisible) {

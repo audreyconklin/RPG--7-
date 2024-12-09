@@ -8,7 +8,7 @@ public class River extends Characters {
     }
 
     public River(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 5, 10, 1, new ImageIcon("River.png"), "SLINGSHOT");
+        super(x, y, w, h, sp, 7, 10, 1, new ImageIcon("River.png"), "VECTOR");
 
     }
 
@@ -23,7 +23,7 @@ public class River extends Characters {
 
     public ArrayList<Weapons> setList() {
         ArrayList<Weapons> temp = new ArrayList<Weapons>();
-        temp.add(new Slingshot());
+        temp.add(new Vector());
         return temp;
     }
 }

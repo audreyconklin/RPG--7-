@@ -8,7 +8,7 @@ public class Willow extends Characters {
     }
 
     public Willow(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 4, 10, 1, new ImageIcon("Willow.png"), "CROSSBOW");
+        super(x, y, w, h, sp, 4, 10, 1, new ImageIcon("Willow.png"), "SCYTHE");
         // super.getWeapon().setX(super.getX()+super.getWidth());
         // super.setWeapons(setList());
 
@@ -25,7 +25,7 @@ public class Willow extends Characters {
 
     public ArrayList<Weapons> setList() {
         ArrayList<Weapons> temp = new ArrayList<Weapons>();
-        temp.add(new Crossbow());
+        temp.add(new Scythe());
         return temp;
     }
 }
