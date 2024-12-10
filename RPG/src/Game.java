@@ -22,8 +22,11 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private String screen;
 	private Characters player;
 	private ImageIcon startBg;
+	private ImageIcon Win;
+	private ImageIcon Lose;
 	private ImageIcon gameBg;
 	private ImageIcon fireText;
+	private ImageIcon restart;
 	private ImageIcon level1;
 	private ImageIcon level2;
 	private ImageIcon selectText;
@@ -67,9 +70,12 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		screen = "start";
 		isVisible = true;
 		enemydefeated = false;
+		Win= new ImageIcon("Win.png");
+		Lose= new ImageIcon("Lose.png");
 		startBg = new ImageIcon("Start.png");
 		gameBg = new ImageIcon("Game.png");
 		fireText = new ImageIcon("Fire.gif");
+		restart = new ImageIcon("Restart.gif");
 		level1 = new ImageIcon("DefeatLevel1.gif");
 		level2 = new ImageIcon("DefeatLevel2.gif");
 		selectText = new ImageIcon("selectC.gif");
@@ -200,16 +206,16 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		// character metrics
 		h = 300;
 		w = 200;
-		speed = 4;
+	
 
 		// Positioning at the bottom of the screen
 		y = this.screenHeight - h - 120;
 
 		ArrayList<Characters> temp = new ArrayList<>();
-		temp.add(new Ivy(150, y, w, h, speed));
-		temp.add(new Willow(600, y, w, h, speed));
-		temp.add(new Oakley(1050, y, w, h, speed));
-		temp.add(new River(1500, y, w, h, speed));
+		temp.add(new Ivy(150, y, w, h,2));
+		temp.add(new Willow(600, y, w, h, 4));
+		temp.add(new Oakley(1050, y, w, h,6));
+		temp.add(new River(1500, y, w, h, 3));
 		return temp;
 	}
 
@@ -294,15 +300,16 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	// win screen
 	public void drawWinScreen(Graphics g2d) {
-		g2d.setColor(Color.BLACK);
-		g2d.drawString("You Win!", 250, 400);
+		g2d.drawImage(Win.getImage(), 0, 0, getWidth(), getHeight(), this);
+		g2d.drawImage(restart.getImage(), 650, 0, 800, 200, this);
 	}
 
-	// loose screen
-	public void drawLooseScreen(Graphics g2d) {
-		g2d.setColor(Color.BLACK);
-		g2d.drawString("HEALTH IS 0! YOU LOOSE!!!!!", 250, 400);
+	// lose screen
+	public void drawLoseScreen(Graphics g2d) {
+		g2d.drawImage(Lose.getImage(), 0, 0, getWidth(), getHeight(), this);
+		g2d.drawImage(restart.getImage(), 650, 0, 800, 200, this);
 	}
+	
 
 	// show the choose screen
 	public void drawChooseScreen(Graphics g2d) {
@@ -323,6 +330,47 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 
 	}
+	private void resetGame() {
+		// Reset game variables
+		screen = "choose";
+		gameBg = new ImageIcon("Game.png");
+		currentLevel = 1;
+		enemies = setEs(currentLevel); // Reset enemies to the first level
+		rangedWeap.clear(); // Clear all projectiles
+		player = null; // Reset player selection
+		timer.stop(); // Stop the timer
+		seconds = 0; // Reset time
+		minutes = 0;
+		milliseconds = 0;
+		enemydefeated = false; // Reset enemy defeated status
+		isVisible = true; // Reset visibility of certain UI elements
+	
+		// Reset character positions and sizes
+		resetCharList();
+	
+		System.out.println("Game reset to 'choose' screen.");
+		repaint(); // Trigger repaint to reflect the changes
+	}
+	private void resetCharList() {
+		int h = 300; // Default height
+		int w = 200; // Default width
+		int speed = 4; // Default speed
+	
+		// Positioning at the bottom of the screen
+		int y = this.screenHeight - h - 120;
+	
+		int x = 150; // Starting x-position
+		int xSpacing = 450; // Space between characters
+	
+		for (int i = 0; i < charList.size(); i++) {
+			Characters character = charList.get(i);
+			character.setX(x + i * xSpacing); // Set x-position with spacing
+			character.setY(y);                // Reset y-position
+			character.setWidth(w);            // Reset width
+			character.setHeight(h);           // Reset height
+		}
+	}
+	
 
 	// Method to draw game elements
 	public void drawGameScreen(Graphics g2d) {
@@ -343,7 +391,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 		if (enemydefeated) {
 			if(currentLevel==1) {
-				g2d.drawImage(level1.getImage(), 650, 0, 500, 180, this);
+				g2d.drawImage(level1.getImage(), 650, 0, 800, 200, this);
 			}
 			else if (currentLevel==2){
 				g2d.drawImage(level2.getImage(), 650, 0, 500, 180, this);
@@ -379,7 +427,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 			// check on health
 			if (player.getHealth() < 1) {
-				screen = "loose";
+				screen = "lose";
 			}
 
 			// move the player with arrow keys
@@ -539,8 +587,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			case "gameplay":
 				drawGameScreen(g2d);
 				break;
-			case "loose":
-				drawLooseScreen(g2d);
+			case "lose":
+				drawLoseScreen(g2d);
 				break;
 			case "win":
 				drawWinScreen(g2d);
@@ -639,7 +687,10 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		key = e.getKeyCode();
 
 		// System.out.println(key);
-
+        //reset
+		if (key == 82) {
+			resetGame();
+		}
 		if (key == 32) {
 			screen = "choose";
 		}

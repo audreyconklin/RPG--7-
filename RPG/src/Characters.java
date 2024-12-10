@@ -233,9 +233,37 @@ public class Characters {
         public boolean isMovingDown() {
             return dy > 0;
         }
+        public boolean move(int screenWidth, int screenHeight, boolean enemyDefeated) {
+            int offset = screenHeight - 60;
+            boolean shouldChangeBackground = false;
+        
+            // Update position using speed
+            x += dx * speed;
+            y += dy * speed;
+        
+            // Ensure the character stays within bounds or transitions
+            if (x < 0) {
+                x = 0; // Left edge
+            } else if (x + w > screenWidth) {
+                if (enemyDefeated) {
+                    x = -w; // Transition to the left side
+                    shouldChangeBackground = true; // Indicate that the background should be changed
+                } else {
+                    x = screenWidth - w; // Right edge, if enemies are not defeated
+                }
+            }
+        
+            if (y < 0) {
+                y = 0; // Top edge
+            } else if (y + h > offset) {
+                y = offset - h; // Bottom edge
+            }
+        
+            return shouldChangeBackground;
+        }
+        
     
-    
-    public boolean move(int screenWidth, int screenHeight, boolean enemyDefeated) {
+   /* public boolean move(int screenWidth, int screenHeight, boolean enemyDefeated) {
         int offset = screenHeight - 60;
         boolean shouldChangeBackground = false;
     
@@ -264,30 +292,8 @@ public class Characters {
         return shouldChangeBackground;
     }
     
-
- /*    public void move(int screenWidth, int screenHeight) {
-        int offset;
-
-        offset = screenHeight - 60;
-
-        // Update position
-        x += dx;
-        y += dy;
-
-        // Ensure the character stays within bounds
-        if (x < 0) {
-            x = 0; // Left edge
-        } else if (x + w > screenWidth) {
-            x = screenWidth - w; // Right edge
-        }
-
-        if (y < 0) {
-            y = 0; // Top edge
-        } else if (y + h > offset) {
-            y = offset - h; // Bottom edge
-        }
-    }
 */
+ 
     public void onHit() {
         if (!isHit) {
             isHit = true;
