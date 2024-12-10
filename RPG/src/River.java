@@ -8,7 +8,7 @@ public class River extends Characters {
     }
 
     public River(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 7, 10, 1, new ImageIcon("River.png"), "VECTOR");
+        super(x, y, w, h, sp, 3, 10, 1, new ImageIcon("River.png"), "VECTOR");
 
     }
 

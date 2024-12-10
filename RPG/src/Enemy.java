@@ -41,7 +41,7 @@ public class Enemy extends Characters {
         Ranged enemyProjectile = new Spear(
                         getX(), // Adjust starting position based on enemy's x
                         getY() + getHeight() / 2 // Center vertically
-                        // speed // You might want a different speed
+                     
         );
         enemyProjectile.setEnemyProjectile(true);
         enemyProjectiles.add(enemyProjectile);  // Track this enemy's projectiles

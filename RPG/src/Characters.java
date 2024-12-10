@@ -1,8 +1,6 @@
 
 import java.awt.Graphics;
-import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import java.awt.*;
 
 public class Characters {
 
@@ -247,7 +245,7 @@ public class Characters {
             } else if (x + w > screenWidth) {
                 if (enemyDefeated) {
                     x = -w; // Transition to the left side
-                    shouldChangeBackground = true; // Indicate that the background should be changed
+                    shouldChangeBackground = true; 
                 } else {
                     x = screenWidth - w; // Right edge, if enemies are not defeated
                 }

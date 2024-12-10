@@ -1,16 +1,16 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.util.Scanner;
-import java.util.Random;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Scanner;
+import javax.swing.*;
 
 public class Game extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
 	private int screenWidth;
@@ -71,7 +71,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		isVisible = true;
 		enemydefeated = false;
 		Win= new ImageIcon("Win.png");
-		Lose= new ImageIcon("Lose.png");
+		Lose= new ImageIcon("Lose.gif");
 		startBg = new ImageIcon("Start.png");
 		gameBg = new ImageIcon("Game.png");
 		fireText = new ImageIcon("Fire.gif");
@@ -214,8 +214,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		ArrayList<Characters> temp = new ArrayList<>();
 		temp.add(new Ivy(150, y, w, h,2));
 		temp.add(new Willow(600, y, w, h, 4));
-		temp.add(new Oakley(1050, y, w, h,6));
-		temp.add(new River(1500, y, w, h, 3));
+		temp.add(new Oakley(1050, y, w, h,3));
+		temp.add(new River(1500, y, w, h, 5));
 		return temp;
 	}
 
@@ -249,11 +249,11 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	// start screen
 	public void drawStartScreen(Graphics g2d) {
 
-		g2d.setColor(Color.white);
+		g2d.setColor(Color.BLACK);
 		g2d.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), this);
-		g2d.drawString(welcome.substring(0, i), 250, 400);
+		g2d.drawString(welcome.substring(0, i), 430, 400);
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 60));
-		g2d.drawString(welcome2.substring(0, i), 450, 460);
+		g2d.drawString(welcome2.substring(0, i), 630, 460);
 		if (i < welcome.length()) {
 			if (System.currentTimeMillis() - time > 100) {
 				time = System.currentTimeMillis();
@@ -307,12 +307,15 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	// lose screen
 	public void drawLoseScreen(Graphics g2d) {
 		g2d.drawImage(Lose.getImage(), 0, 0, getWidth(), getHeight(), this);
-		g2d.drawImage(restart.getImage(), 650, 0, 800, 200, this);
+		g2d.setColor(Color.white);
+		g2d.drawString("Press 'R' to restart ",  620, 960);
+		//g2d.drawImage(restart.getImage(), 620, 520, 800, 200, this);
 	}
 	
 
 	// show the choose screen
 	public void drawChooseScreen(Graphics g2d) {
+		
 		g2d.drawImage(chooseBg.getImage(), 0, 0, getWidth(), getHeight(), this);
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 50));
 		g2d.setColor(Color.black);
@@ -391,6 +394,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 		if (enemydefeated) {
 			if(currentLevel==1) {
+	
 				g2d.drawImage(level1.getImage(), 650, 0, 800, 200, this);
 			}
 			else if (currentLevel==2){
