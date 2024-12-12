@@ -9,8 +9,15 @@ public class Main extends JFrame{
 	
 	public Main () {
 		super("Forest Quest");
-		setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
-		Game play = new Game();
+		// setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
+
+		// Set fixed width and height 
+		int width = 1800; // your desired width 
+		int height = 1600; // your desired height 
+		setSize(width, height);
+
+
+		Game play = new Game(width, height);
 		((Component) play).setFocusable(true);
 		
 		Color darkGreen = new Color(0,60,0);

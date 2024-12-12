@@ -29,8 +29,7 @@ public class Characters {
 
     }
 
-    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p,
-            String weaponType) {
+    public Characters(int xV, int yV, int width, int height, int sp, int hea, int dam, int st, ImageIcon p, String weaponType) {
         x = xV;
         y = yV;
         w = width;

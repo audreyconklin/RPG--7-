@@ -22,15 +22,20 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private String screen;
 	private Characters player;
 	private ImageIcon startBg;
+	private ImageIcon Menu;
 	private ImageIcon Win;
 	private ImageIcon Lose;
 	private ImageIcon gameBg;
+	private ImageIcon Tree;
 	private ImageIcon fireText;
 	private ImageIcon restart;
 	private ImageIcon level1;
 	private ImageIcon level2;
 	private ImageIcon selectText;
 	private ImageIcon chooseBg;
+	private int fastestMinutes = 0;
+    private int fastestSeconds = 0;
+	private int fastestmilliSeconds =0;
 
 	private String welcome;
 	private String welcome2;
@@ -46,31 +51,36 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private int seconds = 0; // Track seconds
 	private int minutes = 0; // Track minutes
 	private int milliseconds = 0;
+	
 	private Timer timer;
 
 	private Timer enemyFireTimer;
 	private Random random;
 
-	public Game() {
+	public Game(int width, int height) {
 
 		new Thread(this).start();
 		this.addKeyListener(this);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.screenWidth = screenSize.width;
-		this.screenHeight = screenSize.height;
+		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.screenWidth = width;
+		this.screenHeight = height;
 
 		key = -1;
 		x = 0;
 		y = 0;
 		saveFile = new File("saved_file2.0.txt");
 		rangedWeap = new ArrayList<Ranged>();
+				
 		screen = "start";
 		isVisible = true;
 		enemydefeated = false;
+		
+		Tree= new ImageIcon("Tree.png");
 		Win= new ImageIcon("Win.png");
+		Menu= new ImageIcon("Menu.png");
 		Lose= new ImageIcon("Lose.gif");
 		startBg = new ImageIcon("Start.png");
 		gameBg = new ImageIcon("Game.png");
@@ -82,24 +92,55 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		chooseBg = new ImageIcon("Forest.png");
 		welcome = "Welcome to Forest Quest";
 		welcome2 = "Press Space to Continue";
+		
 		time = System.currentTimeMillis();
-
-		// Timer to trigger enemy firing randomly
-		random = new Random();
+		timer = new Timer(50, e -> updateTimer());
 		enemyFireTimer = new Timer(1000, e -> triggerEnemyFire());
+		random = new Random();
+				
+		// Timer to trigger enemy firing randomly
 		enemyFireTimer.start(); // Start the timer when the game begins
-
+		
 		// create the enemy position
-		enemies = setEs(1);
-
+		enemies = setEs(currentLevel);
 		charList = setCharList();
 		// for (Characters c : charList) {
 		// System.out.println(c);
 		// }
 
-		timer = new Timer(10, e -> updateTimer());
+		
 
 	}
+
+	private void resetGame() {
+		// Reset game variables
+		screen = "choose";
+		gameBg = new ImageIcon("Game.png");
+		currentLevel = 1;
+		enemies = null; // Reset enemies
+		enemies = setEs(currentLevel); // Reset enemies to the first level
+		rangedWeap.clear(); // Clear all projectiles
+		
+		
+		enemydefeated = false; // Reset enemy defeated status
+		isVisible = true; // Reset visibility of certain UI elements
+	
+		// Reset characters
+		player = null; // Reset chosen player selection
+		charList = null;
+		//create choices again
+		charList = setCharList();
+
+		enemyFireTimer.start(); // Start the timer when the game begins
+		timer.stop(); // Stop the timer
+		seconds = 0; // Reset time
+		minutes = 0;
+		milliseconds = 0;
+
+		System.out.println("Game reset to 'choose' screen.");
+		repaint(); // Trigger repaint to reflect the changes
+	}
+
 
 	// create 4 enemy positions; use peek to get the first on in the stack; poll
 	// removes it from the stack.
@@ -119,6 +160,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 				temp.add(new Goblin(1000, 550));
 				temp.add(new Goblin(1200, 550));
 				temp.add(new Goblin(1400, 550));
+				
+				
 				break;
 			case 3:
 				temp.add(new Orc(600, 550));
@@ -126,6 +169,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 				temp.add(new Orc(1000, 550));
 				temp.add(new Orc(1200, 550));
 				temp.add(new Orc(1400, 550));
+				temp.add(new Orc(1100, 200));
 				break;
 			default:
 				// Default to level 1 enemies if an invalid level is provided
@@ -154,51 +198,79 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 
 	}
-
 	public String readFile() {
 		StringBuilder fileContent = new StringBuilder();
 		Scanner sc;
 		try {
 			sc = new Scanner(saveFile);
 			while (sc.hasNext()) {
-				// System.out.println(sc.next());
-				fileContent.append(sc.nextLine()); // Append the line to the StringBuilder
-
+				String line = sc.nextLine();
+				fileContent.append(line).append("\n");
+				
+				// Parse fastest time if found
+				if (line.contains("Fastest Time")) {
+					String[] parts = line.split(":");
+					fastestMinutes = Integer.parseInt(parts[1].trim());
+					fastestSeconds = Integer.parseInt(parts[2].trim());
+					fastestmilliSeconds = Integer.parseInt(parts[3].trim());
+				}
 			}
-			fileContent.append("\n");
-			sc.close(); // Close the scanner after reading the file
+			sc.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
-
-		return fileContent.toString(); // Return the accumulated content as a String
-
+		return fileContent.toString();
 	}
-
+	
 	public void writeToFile() {
-		FileWriter myWriter;
 		try {
-			myWriter = new FileWriter(saveFile);
-			// // write whatever you want to save
-			// if (enemies.isEmpty()) {
-			// myWriter.write("win");
+		
+	
+			// More detailed debugging for validation 
+			// System.out.println("Validation - Fastest Minutes: " + fastestMinutes); 
+			// System.out.println("Validation - Fastest Seconds: " + fastestSeconds); 
+			// System.out.println("Validation - Fastest Milliseconds: " + fastestmilliSeconds);
 
-			// } else {
-			String time = String.format("%02d:%02d", minutes, seconds);
-			myWriter.write("You took " + time + " last time to defeat the enemy");
+			FileWriter myWriter = new FileWriter(saveFile);
+			
+			// Create current time string
+			String currentTime = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
+			
+			// Write last completed time
+			myWriter.write("Last Time: " + currentTime + "\n");
+			
+			
+				// Update and write fastest time if current time is better or not set at all
+				if ((fastestMinutes == 0 && fastestSeconds == 0 && fastestmilliSeconds == 0) || 
+				 		isCurrentTimeFaster(minutes, seconds, milliseconds, fastestMinutes, fastestSeconds, fastestmilliSeconds)
+					){
+					
+						// If the current time is better, update fastest time,but ONLY if you win! 
+						if (screen.equals("win") ) {
+							fastestMinutes = minutes;
+							fastestSeconds = seconds;
+							fastestmilliSeconds = milliseconds;
+						}
+		
+				} 
+			
+		
+				String fastestTime = String.format("%02d:%02d:%03d", fastestMinutes, fastestSeconds, fastestmilliSeconds);
+				myWriter.write("Fastest Time: " + fastestTime + "\n");
 
-			// }
+	
 			myWriter.close();
 			System.out.println("Successfully wrote to file");
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
+	
+	
+	
 	// create characters
 	public ArrayList<Characters> setCharList() {
 		int y, h, w, speed;
@@ -213,9 +285,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 		ArrayList<Characters> temp = new ArrayList<>();
 		temp.add(new Ivy(150, y, w, h,2));
-		temp.add(new Willow(600, y, w, h, 4));
-		temp.add(new Oakley(1050, y, w, h,3));
-		temp.add(new River(1500, y, w, h, 5));
+		temp.add(new Willow(600, y, w, h, 3));
+		temp.add(new Oakley(1050, y, w, h,2));
+		temp.add(new River(1500, y, w, h, 3));
 		return temp;
 	}
 
@@ -251,9 +323,15 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 		g2d.setColor(Color.BLACK);
 		g2d.drawImage(startBg.getImage(), 0, 0, getWidth(), getHeight(), this);
-		g2d.drawString(welcome.substring(0, i), 430, 400);
+		//  welcome 
+		drawCenteredString(g2d,welcome.substring(0, i), 400);
+		// g2d.drawString(welcome.substring(0, i), 430, 400);
+		
+		//  press space
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 60));
-		g2d.drawString(welcome2.substring(0, i), 630, 460);
+		drawCenteredString(g2d,welcome2.substring(0, i), 460);
+		// g2d.drawString(welcome2.substring(0, i), 630, 460);
+		
 		if (i < welcome.length()) {
 			if (System.currentTimeMillis() - time > 100) {
 				time = System.currentTimeMillis();
@@ -261,6 +339,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 			}
 		}
+		
 		if (i < welcome2.length()) {
 			if (System.currentTimeMillis() - time > 100) {
 				time = System.currentTimeMillis();
@@ -270,46 +349,86 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		}
 
 	}
-
-	// Method to change the level
-	private void changeLevel() {
-			currentLevel++;
-			switch (currentLevel) {
-				case 1:
-					gameBg = new ImageIcon("Game.png");
-					enemies = setEs(currentLevel);
-				break;
-			case 2:
-				gameBg = new ImageIcon("Game2.png");
-				enemies = setEs(currentLevel);
-				break;
-			case 3:
-				gameBg = new ImageIcon("Game3.png");
-				enemies = setEs(currentLevel);
-				break;
-			default:
-				currentLevel = 1;
-				gameBg = new ImageIcon("Game.png");
-				enemies = setEs(currentLevel);
-				break;
-		}
-			enemydefeated=false;
-	}
 	
+//menu screen
+public void drawMenuScreen(Graphics g2d) {
+    // Draw the background image for the menu
+    g2d.drawImage(Menu.getImage(), 0, 0, getWidth(), getHeight(), this);
+    g2d.setFont(new Font("Monospaced", Font.BOLD, 40));
+    g2d.setColor(Color.black);
+	g2d.drawImage(Tree.getImage(), 650, 300, 300, 200, this);
+    
+    String[] lines = {
+        "Forest Quest",
+        "",
+        "Defeat the enemies lurking in the forest",
+        "",
+		"There will be 3 enemies along your quest",
+        "",
+		"Emerge victorious in your joruney!",
+		"",
+        "Instructions:",
+        "Move: Arrow Keys",
+        "Fire: 'F'",
+        "Restart: 'R'",
+        "",
+		"",
 
+		"Press 'C' to continue",
+        "",
+        "Good luck, brave adventurer!"
+    };
+
+    int y = 160; // Starting Y coordinate
+    for (String line : lines) {
+        int x = (getWidth() - g2d.getFontMetrics().stringWidth(line)) / 2; // Center the text
+        g2d.drawString(line, x, y);
+        y += g2d.getFontMetrics().getHeight(); // Move to the next line
+    }
+	g2d.drawImage(Tree.getImage(), 650, 650, 300, 200, this);
+}
 
 	// win screen
 	public void drawWinScreen(Graphics g2d) {
 		g2d.drawImage(Win.getImage(), 0, 0, getWidth(), getHeight(), this);
 		g2d.drawImage(restart.getImage(), 650, 0, 800, 200, this);
+
+		String currentTime = String.format("Your time Was : %02d:%02d:%03d", minutes, seconds, milliseconds);
+		String fastestTime = String.format("Boo! You did not beat the fastest time : %02d:%02d:%03d", fastestMinutes, fastestSeconds, fastestmilliSeconds);
+		if (isCurrentTimeFaster(minutes, seconds, milliseconds, fastestMinutes, fastestSeconds, fastestmilliSeconds)) {	
+			fastestTime = "Yah! This is the new fastest time!";
+		}
+	
+		// Display the time as MM:SS
+		g2d.setFont(new Font("Times new Roman", Font.BOLD, 50));
+		g2d.setColor(Color.white);
+		y= 600;
+		// g2d.drawString(currentTime, 400, y);
+		drawCenteredString(g2d,currentTime, y);
+		y += g2d.getFontMetrics().getHeight(); // Move y-coordinate down for next line
+		// g2d.drawString(fastestTime, 400, y);
+		drawCenteredString(g2d,fastestTime, y);
+
+		enemyFireTimer.stop();
+
 	}
 
 	// lose screen
 	public void drawLoseScreen(Graphics g2d) {
 		g2d.drawImage(Lose.getImage(), 0, 0, getWidth(), getHeight(), this);
 		g2d.setColor(Color.white);
-		g2d.drawString("Press 'R' to restart ",  620, 960);
+
+		String currentTime = String.format("Time played: %02d:%02d:%03d", minutes, seconds, milliseconds);
+        // String fastestTime = String.format("Fastest Time: %02d:%02d:%03d", fastestMinutes, fastestSeconds, fastestmilliSeconds);
+
+		// g2d.drawString(currentTime, 450, 80);
+		drawCenteredString(g2d,currentTime, 80);
+		// g2d.drawString(fastestTime, 450, 50);
+		// g2d.drawString("Press 'R' to restart ",  440, 1060);
+		drawCenteredString(g2d, "Press 'R' to restart ", 1060);
+		timer.stop();
 		//g2d.drawImage(restart.getImage(), 620, 520, 800, 200, this);
+		enemyFireTimer.stop();
 	}
 	
 
@@ -319,11 +438,13 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		g2d.drawImage(chooseBg.getImage(), 0, 0, getWidth(), getHeight(), this);
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 50));
 		g2d.setColor(Color.black);
+		
 		// g2d.drawImage(selectText.getImage(), 500,y,1000, 1000,this);
-		g2d.drawString("Select your character's number to begin", 300, 95);
+		// g2d.drawString("Select your character's number to begin", 300, 95);
+		drawCenteredString(g2d, "Select your character's number to begin", 95);
 		g2d.setColor(Color.white);
+		
 		int namex;
-
 		namex = 170;
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 40));
 		for (Characters c : charList) {
@@ -332,46 +453,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			namex = namex += 450;
 		}
 
-	}
-	private void resetGame() {
-		// Reset game variables
-		screen = "choose";
-		gameBg = new ImageIcon("Game.png");
-		currentLevel = 1;
-		enemies = setEs(currentLevel); // Reset enemies to the first level
-		rangedWeap.clear(); // Clear all projectiles
-		player = null; // Reset player selection
-		timer.stop(); // Stop the timer
-		seconds = 0; // Reset time
-		minutes = 0;
-		milliseconds = 0;
-		enemydefeated = false; // Reset enemy defeated status
-		isVisible = true; // Reset visibility of certain UI elements
-	
-		// Reset character positions and sizes
-		resetCharList();
-	
-		System.out.println("Game reset to 'choose' screen.");
-		repaint(); // Trigger repaint to reflect the changes
-	}
-	private void resetCharList() {
-		int h = 300; // Default height
-		int w = 200; // Default width
-		int speed = 4; // Default speed
-	
-		// Positioning at the bottom of the screen
-		int y = this.screenHeight - h - 120;
-	
-		int x = 150; // Starting x-position
-		int xSpacing = 450; // Space between characters
-	
-		for (int i = 0; i < charList.size(); i++) {
-			Characters character = charList.get(i);
-			character.setX(x + i * xSpacing); // Set x-position with spacing
-			character.setY(y);                // Reset y-position
-			character.setWidth(w);            // Reset width
-			character.setHeight(h);           // Reset height
-		}
+
+
 	}
 	
 
@@ -383,13 +466,12 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		g2d.setFont(new Font("Times new Roman", Font.BOLD, 30));
 		g2d.setColor(Color.white);
 		// Format the time as mm:ss:SSS (minutes:seconds:milliseconds)
-		String time = String.format("%02d:%02d:%02d", minutes, seconds, milliseconds);
+		String time = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds );
 		g2d.drawString(time, 10, 30);
 
 		// display the players health
 		// String phealth = Integer.toString(player.getHealth());
 		String phealth = "Health: " + player.getHealth();
-
 		g2d.drawString(phealth, 10, 60);
 
 		if (enemydefeated) {
@@ -411,16 +493,26 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 			g2d.drawImage(fireText.getImage(), 650, 0, 500, 180, this);
 
+			//read the file to retrieve the fatest time and last play time 
+
 			String fileContents = readFile(); // Read the contents of the file
 			if (fileContents != null) {
-
-				g2d.setFont(new Font("Times new Roman", Font.BOLD, 40));
+				g2d.setFont(new Font("Times New Roman", Font.BOLD, 40));
 				g2d.setColor(Color.white);
 
-				// You can now use the file contents, for example, to draw it on the screen
-				g2d.drawString(fileContents, 450, 200); // Example of using the file content in the paint method
+				// Split the file contents into individual lines
+				String[] lines = fileContents.split("\n");
 
-			}
+				// Initial y-coordinate for drawing the first line
+				int y = 200;
+				// Draw each line
+				for (String line : lines) {
+					// g2d.drawString(line, 450, y);
+					drawCenteredString(g2d, line, y);
+					y += g2d.getFontMetrics().getHeight(); // Move y-coordinate down for next line
+				}
+}
+
 
 		}
 
@@ -453,12 +545,16 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			player.drawChar(g2d);
 
 		}
+		
 
 		/*********************
 		 * The enemy stack
 		 ********************/
 		if (!enemies.isEmpty()) {
-			Enemy currentEnemy = enemies.element();
+			Enemy currentEnemy = enemies.peek();
+			
+		//	g2d.drawString(" current enemy: " + currentEnemy.toString(), 360, 395);
+
 			// move the projectiles
 			currentEnemy.moveProjectiles();
 			// draw the weapons
@@ -470,20 +566,96 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			currentEnemy.drawChar(g2d);
 
 			// no more enemeis; I am the winner!
-		} else {
-
-			timer.stop();
+		} else if (currentLevel < 3) {
+			// Proceed to the next level if not the final level
 			enemydefeated = true;
-			
-			// screen = "win";
-			// System.out.println("No enemies to draw.");
-
+		} else {
+			// Final level completed, stop timer
+			timer.stop();
+			screen = "win";
 		}
-
 		// Check for collisions
 		handleCollision();
 
 	}
+
+
+	private void drawScreen(Graphics g2d) {
+
+		// TODO Auto-generated method stub
+
+		switch (screen) {
+
+			case "start":
+				drawStartScreen(g2d);
+				break;
+				case "menu":
+				drawMenuScreen(g2d);
+				break;
+			case "choose":
+				drawChooseScreen(g2d);
+				break;
+			case "selection":
+				drawSelectScreen(g2d);
+				break;
+			case "gameplay":
+				drawGameScreen(g2d);
+				break;
+			case "lose":
+				drawLoseScreen(g2d);
+				break;
+			case "win":
+				drawWinScreen(g2d);
+				break;
+			default:
+				System.out.println("Unknown screen: " + screen);
+				break;
+
+		}
+
+	}
+
+	public void drawSelectScreen(Graphics g2d) {
+
+		player.drawChar(g2d);
+		g2d.setFont(new Font("Times new Roman", Font.BOLD, 35));
+		// g2d.drawString("You picked " + player.toString(), 360, 95);
+		// g2d.drawString(" Press 'B' to go back ", 700, 145);
+		// g2d.drawString(" Press 'Enter' to select", 700, 205);
+		drawCenteredString(g2d, "You picked " + player.toString() +"", 95);
+		drawCenteredString(g2d, "Press 'B' to go back", 145);
+		drawCenteredString(g2d, "Enter' to select", 205);
+
+		// add code that states \characters
+
+	}
+
+	// Method to change the level
+	private void changeLevel() {
+			currentLevel++;
+			switch (currentLevel) {
+				case 1:
+					gameBg = new ImageIcon("Game.png");
+					enemies = setEs(currentLevel);
+				break;
+			case 2:
+				gameBg = new ImageIcon("Game2.png");
+				enemies = setEs(currentLevel);
+				break;
+			case 3:
+				gameBg = new ImageIcon("Game3.png");
+				enemies = setEs(currentLevel);
+				break;
+			default:
+				currentLevel = 1;
+				gameBg = new ImageIcon("Game.png");
+				enemies = setEs(currentLevel);
+				break;
+		}
+			enemydefeated=false;
+	}
+	
+
 
 	private void handleCollision() {
 		// Create a list to track projectiles to remove
@@ -501,9 +673,16 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 				Enemy currentEnemy = enemies.peek(); // Peek at the first enemy
 
 				if (isProjectileCollidingWithCharacter(projectile, currentEnemy)) {
-					System.out.println("Enemy hit!");
+					// System.out.println("Enemy hit!");
+					currentEnemy.setHealth(currentEnemy.getHealth()-1);
+					System.out.println("Enemy Hit. HEALTH :" + currentEnemy.getHealth());
+							
 					charProjectilesToRemove.add(projectile);
-					enemies.poll(); // Remove hit enemy
+					if (currentEnemy.getHealth()<=0) {
+						enemies.poll(); // Remove hit enemy
+
+					} 
+					
 				}
 			}
 
@@ -532,7 +711,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 					if (isProjectileCollidingWithCharacter(enemyProjectile, player)) {
 						player.onHit();
-						player.setHealth(player.getHealth() - 1);
+						player.setHealth(player.getHealth() - currentEnemy.getDamage());
 						System.out.println("Player hit by enemy projectile - new health: " + player.getHealth());
 						enemyProjectilesToRemove.add(enemyProjectile);
 					}
@@ -573,48 +752,14 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		return isColliding;
 	}
 
-	private void drawScreen(Graphics g2d) {
-
-		// TODO Auto-generated method stub
-
-		switch (screen) {
-
-			case "start":
-				drawStartScreen(g2d);
-				break;
-			case "choose":
-				drawChooseScreen(g2d);
-				break;
-			case "selection":
-				drawSelectScreen(g2d);
-				break;
-			case "gameplay":
-				drawGameScreen(g2d);
-				break;
-			case "lose":
-				drawLoseScreen(g2d);
-				break;
-			case "win":
-				drawWinScreen(g2d);
-				break;
-			default:
-				System.out.println("Unknown screen: " + screen);
-				break;
-
-		}
-
+	public boolean isCurrentTimeFaster(int minutes, int seconds, int milliseconds, int fastestMinutes, int fastestSeconds, int fastestMilliseconds) {
+		return minutes < fastestMinutes || 
+			   (minutes == fastestMinutes && seconds < fastestSeconds) || 
+			   (minutes == fastestMinutes && seconds == fastestSeconds && milliseconds < fastestMilliseconds);
 	}
+	
 
-	public void drawSelectScreen(Graphics g2d) {
-
-		player.drawChar(g2d);
-		g2d.setFont(new Font("Times new Roman", Font.BOLD, 35));
-		g2d.drawString("You picked " + player.toString(), 360, 95);
-		g2d.drawString(" Press 'B' to go back ", 700, 145);
-		g2d.drawString(" Press 'Enter' to select", 700, 205);
-		// add code that states \characters
-
-	}
+		
 
 	// DO NOT DELETE
 	@Override
@@ -633,7 +778,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 			if (projectile != null) {
 				rangedWeap.add(projectile);
-				System.out.println("player fired! Current count: " + rangedWeap.size());
+				// System.out.println("player fired! Current count: " + rangedWeap.size());
 				repaint(); // Trigger repaint to show the new projectile
 			}
 
@@ -649,7 +794,7 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 					// Ranged enemyProjectile = currentEnemy.fireBack();
 					currentEnemy.fireBack();
-					System.out.println("Enemy fired!");
+				//	System.out.println("Enemy fired!");
 					repaint(); // Ensure the firing is reflected visually
 					// }
 
@@ -661,9 +806,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 
 	// Update the timer every 10ms
 	private void updateTimer() {
-		milliseconds++; // Increment milliseconds
+		milliseconds+=50; // Increment milliseconds
 
-		if (milliseconds >= 100) { // 100 milliseconds = 1 second
+		if (milliseconds >= 1000) { // 100 milliseconds = 1 second
 			milliseconds = 0; // Reset milliseconds
 			seconds++; // Increment seconds
 		}
@@ -685,6 +830,21 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		player.setHeight(100);
 	}
 
+	public void drawCenteredString(Graphics g2d, String text, int y) {
+			// Retrieve the screen width or the width of the component
+			int width = this.getWidth(); // Assumes this function is within a class that extends a Swing component
+		
+			// Get the FontMetrics
+			FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+		
+			// Determine the X coordinate for the text
+			int x = (width - metrics.stringWidth(text)) / 2;
+		
+			// Draw the String
+			g2d.drawString(text, x, y);
+	}
+	
+	
 	// DO NOT DELETE
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -696,6 +856,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 			resetGame();
 		}
 		if (key == 32) {
+			screen = "menu";
+		}
+		if (key == 67) {
 			screen = "choose";
 		}
 		// right
@@ -804,8 +967,6 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	public void mousePressed(MouseEvent arg0) {
 
 		// TODO Auto-generated method stub
-
-		System.out.println("you clicked at" + arg0.getY());
 
 		x = arg0.getX();
 

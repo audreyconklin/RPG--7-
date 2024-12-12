@@ -6,11 +6,11 @@ public class Thorn extends Enemy{
         super();
     }
     public String toString(){
-        return "Thorn";
-
+        return "Thorn"  + super.toString();
     }
+ 
     public Thorn(int x, int y){
-        super(x,y, 200, 200, 2, 172,2000,5, 10, new ImageIcon("Thorn (2).png"), "SPEAR");
+        super(x,y, 200, 200, 2, 1, 1, 5, 10, new ImageIcon("Thorn (2).png"), "SPEAR");
         
     }
    

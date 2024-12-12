@@ -23,7 +23,8 @@ public class Enemy extends Characters {
     }
 
     public Enemy(int x, int y, int w, int h, int speed, int hea, int dam, int st, int wSpeed, ImageIcon pic, String weaponType) {
-          super(x, y, w, h, speed, hea, dam, st, pic, weaponType);
+
+        super(x, y, w, h, speed, hea, dam, st, pic, weaponType);
         this.weaponSpeed= wSpeed;
         this.isUnderFire = false;
         this.accuracy = 0.8;
@@ -110,7 +111,10 @@ public class Enemy extends Characters {
         } else if (player.isMovingDown()) {
             setY(getY()-1);  // Move up
         }
+        Enemy enemy = new Enemy(); System.out.println(enemy.isEnemy(enemy));
     }
-    
+    // Check if enemy
+    public boolean isEnemy(Object obj) 
+    { return obj instanceof Enemy; } 
 
 }

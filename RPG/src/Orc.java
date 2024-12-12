@@ -6,12 +6,11 @@ public class Orc extends Enemy{
         super();
     }
     public String toString(){
-        return "Orc";
-
+        return "Orc"  + super.toString();
     }
+
     public  Orc (int x, int y){
-        super(x,y, 200, 200, 2, 172,2000,5, 40, 
-        new ImageIcon("Orc.png"), "SPEAR");
+        super(x,y, 650, 650, 2, 3,5,5, 40,  new ImageIcon("Orc.png"), "SPEAR");
         
     }
    

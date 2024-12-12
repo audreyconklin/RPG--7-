@@ -8,7 +8,7 @@ public class Oakley extends Characters {
     }
 
     public Oakley(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 3, 10, 1, new ImageIcon("Oakley.png"), "MACE");
+        super(x, y, w, h, sp, 4, 10, 1, new ImageIcon("Oakley.png"), "MACE");
 
     }
 

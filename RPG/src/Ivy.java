@@ -8,7 +8,7 @@ public class Ivy extends Characters {
     }
 
     public Ivy(int x, int y, int w, int h, int sp) {
-        super(x, y, w, h, sp, 3, 10, 1, new ImageIcon("Ivy.png"), "KNIFE");
+        super(x, y, w, h, sp, 5, 10, 1, new ImageIcon("Ivy.png"), "KNIFE");
 
     }
 
