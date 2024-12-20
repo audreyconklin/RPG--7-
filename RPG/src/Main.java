@@ -13,7 +13,7 @@ public class Main extends JFrame{
 
 		// Set fixed width and height 
 		int width = 1800; // your desired width 
-		int height = 1600; // your desired height 
+		int height = 1000; // your desired height 
 		setSize(width, height);
 
 

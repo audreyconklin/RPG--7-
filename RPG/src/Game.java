@@ -429,7 +429,7 @@ public void drawMenuScreen(Graphics g2d) {
 		drawCenteredString(g2d,currentTime, 80);
 		// g2d.drawString(fastestTime, 450, 50);
 		// g2d.drawString("Press 'R' to restart ",  440, 1060);
-		drawCenteredString(g2d, "Press 'R' to restart ", 1060);
+		drawCenteredString(g2d, "Press 'R' to restart ", 750);
 		timer.stop();
 		//g2d.drawImage(restart.getImage(), 620, 520, 800, 200, this);
 		enemyFireTimer.stop();
