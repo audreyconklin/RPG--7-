@@ -543,9 +543,9 @@ public void drawMenuScreen(Graphics g2d) {
 			}
 			 // Display reload message if any
 			 if (!reloadMessage.isEmpty()) {
-				g2d.setColor(Color.white);
+				g2d.setColor(Color.BLACK);
 				g2d.setFont(new Font("Times new Roman", Font.BOLD,40));
-				drawCenteredString(g2d, reloadMessage, 150);
+				drawCenteredString(g2d, reloadMessage, 200);
 				//g2d.drawString(reloadMessage, 10, 10);
 			}
 
