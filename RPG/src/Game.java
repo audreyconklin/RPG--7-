@@ -47,6 +47,8 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 	private Queue<Enemy> enemies;
 	private File saveFile;
 
+	private String reloadMessage;
+
 	private int currentLevel = 1;
 	private int seconds = 0; // Track seconds
 	private int minutes = 0; // Track minutes
@@ -97,7 +99,9 @@ public class Game extends JPanel implements Runnable, KeyListener, MouseListener
 		timer = new Timer(50, e -> updateTimer());
 		enemyFireTimer = new Timer(1000, e -> triggerEnemyFire());
 		random = new Random();
-				
+		
+		reloadMessage = "";
+
 		// Timer to trigger enemy firing randomly
 		enemyFireTimer.start(); // Start the timer when the game begins
 		
@@ -537,6 +541,13 @@ public void drawMenuScreen(Graphics g2d) {
 				projectile.move(10); // move
 				projectile.drawWeap(g2d); // draw
 			}
+			 // Display reload message if any
+			 if (!reloadMessage.isEmpty()) {
+				g2d.setColor(Color.white);
+				g2d.setFont(new Font("Times new Roman", Font.BOLD,40));
+				drawCenteredString(g2d, reloadMessage, 150);
+				//g2d.drawString(reloadMessage, 10, 10);
+			}
 
 			// make the character react to a hit
 			player.updateHitEffect();
@@ -769,21 +780,47 @@ public void drawMenuScreen(Graphics g2d) {
 
 	}
 
-	// Method to fire the weapon
+	// // Method to fire the weapon
+	// public void fireWeapon() {
+	// 	if (player != null && !enemies.isEmpty()) {
+
+	// 		// throw the weapon
+	// 		Ranged projectile = player.throwWeapon();
+
+	// 		if (projectile != null) {
+	// 			rangedWeap.add(projectile);
+	// 			// System.out.println("player fired! Current count: " + rangedWeap.size());
+	// 			repaint(); // Trigger repaint to show the new projectile
+	// 		}
+
+	// 	}
+	// }
+	
+
 	public void fireWeapon() {
-		if (player != null && !enemies.isEmpty()) {
+        if (player != null && !enemies.isEmpty()) {
+            Ranged projectile = player.throwWeapon();
+            if (projectile != null) {
+                rangedWeap.add(projectile);
+                repaint(); // Trigger repaint to show the new projectile
+            }
+		
+            if (player.getAmmoCount() == 0 && !player.isReloading()) {
+                player.startReload();
+                reloadMessage = "Weapon is cooling down. Please wait.";
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(player.getReloadCooldownPeriod());
+                        reloadMessage = "";
+                        repaint(); // Trigger repaint to remove the message
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+            }
+        }
+    }
 
-			// throw the weapon
-			Ranged projectile = player.throwWeapon();
-
-			if (projectile != null) {
-				rangedWeap.add(projectile);
-				// System.out.println("player fired! Current count: " + rangedWeap.size());
-				repaint(); // Trigger repaint to show the new projectile
-			}
-
-		}
-	}
 
 	// Method to trigger enemy firing
 	private void triggerEnemyFire() {
@@ -902,6 +939,10 @@ public void drawMenuScreen(Graphics g2d) {
 			isVisible = false;
 
 		}
+		// if (key == 82) { // R key
+		// 	reloadWeapon();
+
+		// }
 		// enter
 		if (key == 10) {
 			if (player != null) {

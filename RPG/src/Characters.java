@@ -12,7 +12,14 @@ public class Characters {
     private boolean isHit = false;
     private int shakeCount = 0;
     private final int MAX_SHAKE_COUNT = 10; // Number of shake iterations
-    
+    private int ammoCount;
+    private int maxAmmo;
+    private long lastFireTime;
+    private long lastReloadTime;
+    private long fireCooldownPeriod;
+    private long reloadCooldownPeriod;
+    private boolean isReloading;
+
 
     public Characters() {
         x = 0;
@@ -26,6 +33,7 @@ public class Characters {
         dx = 0;
         dy = 0;
         pic = new ImageIcon();
+    
 
     }
 
@@ -43,6 +51,12 @@ public class Characters {
         dy = 0;
         this.weaponType = weaponType;
         this.weap = createNewWeapon();
+        this.maxAmmo = 10;
+        this.ammoCount = 10;
+        this.fireCooldownPeriod = 800;
+        this.reloadCooldownPeriod = 4000;
+        this.lastFireTime = 0;
+        this.lastReloadTime = 0;
         // weap = we;
         // weaponList = list;
 
@@ -89,9 +103,32 @@ public class Characters {
     }
 
     public Ranged throwWeapon() {
-        // Create and return a new projectile
-        return createNewWeapon();
+
+        if (ammoCount > 0 && (System.currentTimeMillis() - lastFireTime) >= fireCooldownPeriod) {
+            lastFireTime = System.currentTimeMillis();
+            ammoCount--;
+            // Return a new projectile (assuming Ranged is a class representing the projectile)
+            // Create and return a new projectile
+           return createNewWeapon();
+        }
+        return null;
+
+        
     }
+
+    public void startReload() {
+        isReloading = true;
+        new Thread(() -> {
+            try {
+                Thread.sleep(reloadCooldownPeriod);
+                ammoCount = maxAmmo;
+                isReloading = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+  
 
     public void drawChar(Graphics g2d) {
         // Draw character
@@ -119,6 +156,21 @@ public class Characters {
     }
 
     // Getters
+
+
+    // Getter for ammoCount if needed
+    public int getAmmoCount() {
+        return ammoCount;
+    }
+
+    public boolean isReloading() {
+        return isReloading;
+    }
+
+    public long getReloadCooldownPeriod() {
+         return reloadCooldownPeriod; 
+     }
+     
     public int getX() {
         return x;
     }
